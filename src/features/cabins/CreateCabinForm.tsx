@@ -5,41 +5,33 @@ import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import { useForm } from 'react-hook-form';
 import { Cabin } from '../../interfaces/Cabin';
-import { createCabin, updateCabin } from '../../services/apiCabins';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 import FormRow from '../../ui/FormRow';
+import { useCreateEditCabin } from './useCreateEditCabin';
 
-function CreateCabinForm({editCabinData}:{editCabinData?:Cabin}) {
+function CreateCabinForm({ editCabinData }: { editCabinData?: Cabin }) {
   const isEditing = Boolean(editCabinData?.id);
 
   //getValues: values of the form
   const { register, handleSubmit, reset, getValues, formState } =
     useForm<Cabin>({
-      defaultValues: isEditing ? editCabinData : {}
+      defaultValues: isEditing ? editCabinData : {},
     });
 
   const { errors, touchedFields } = formState;
 
   console.log(touchedFields); // If you want to add touched validation
   console.log(getValues());
-  const queryClient = useQueryClient();
 
-  const { mutate, isPending: isLoading } = useMutation({
-    mutationFn: isEditing ? updateCabin : createCabin,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['cabins'],
-      });
-      reset();
-      toast.success(isEditing ? 'Cabin uploaded!' : 'Cabin created!');
-    },
-    onError: (err) => toast.error(err.message),
-  });
+  //Custom hook
+  const { mutate, isLoading } = useCreateEditCabin(isEditing);
 
   function onSubmit(data: Cabin) {
     console.log(data); //Be careful with the numbers
-    mutate({...data, image: data.image instanceof FileList ? data.image[0] : data.image });
+    mutate({...data,image: data.image instanceof FileList ? data.image[0] : data.image},
+      {
+        onSuccess: () => reset()
+      }
+    );
   }
 
   function onError(errors) {
@@ -115,9 +107,13 @@ function CreateCabinForm({editCabinData}:{editCabinData?:Cabin}) {
       </FormRow>
 
       <FormRow label={'Cabin photo'} error={errors?.image?.message}>
-        <FileInput {...register('image',{
-          required: isEditing ? false :  'This field is required'
-        })} id="image" accept="image/*" />
+        <FileInput
+          {...register('image', {
+            required: isEditing ? false : 'This field is required',
+          })}
+          id="image"
+          accept="image/*"
+        />
       </FormRow>
 
       <FormRow>
@@ -125,7 +121,9 @@ function CreateCabinForm({editCabinData}:{editCabinData?:Cabin}) {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isLoading}>{isEditing ? 'Edit Cabin' : 'Create new Cabin'}</Button>
+        <Button disabled={isLoading}>
+          {isEditing ? 'Edit Cabin' : 'Create new Cabin'}
+        </Button>
       </FormRow>
     </Form>
   );

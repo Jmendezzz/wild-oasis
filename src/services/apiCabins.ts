@@ -42,7 +42,7 @@ export async function deleteCabin(id: number) {
 }
 
 export async function updateCabin(cabin: Cabin) {
-  console.log('update', cabin);
+  console.log('update', cabin)
   if (cabin.image instanceof File) {
     const {path, error }  = await uploadImage(cabin.image);
     if(error){
