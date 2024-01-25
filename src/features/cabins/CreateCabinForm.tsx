@@ -5,16 +5,19 @@ import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import { useForm } from 'react-hook-form';
 import { Cabin } from '../../interfaces/Cabin';
-import { createCabin } from '../../services/apiCabins';
+import { createCabin, updateCabin } from '../../services/apiCabins';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import FormRow from '../../ui/FormRow';
-import Row from '../../ui/Row';
 
-function CreateCabinForm() {
+function CreateCabinForm({editCabinData}:{editCabinData?:Cabin}) {
+  const isEditing = Boolean(editCabinData?.id);
+
   //getValues: values of the form
   const { register, handleSubmit, reset, getValues, formState } =
-    useForm<Cabin>();
+    useForm<Cabin>({
+      defaultValues: isEditing ? editCabinData : {}
+    });
 
   const { errors, touchedFields } = formState;
 
@@ -23,20 +26,20 @@ function CreateCabinForm() {
   const queryClient = useQueryClient();
 
   const { mutate, isPending: isLoading } = useMutation({
-    mutationFn: createCabin,
+    mutationFn: isEditing ? updateCabin : createCabin,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['cabins'],
       });
       reset();
-      toast.success('Cabin created');
+      toast.success(isEditing ? 'Cabin uploaded!' : 'Cabin created!');
     },
     onError: (err) => toast.error(err.message),
   });
 
   function onSubmit(data: Cabin) {
     console.log(data); //Be careful with the numbers
-    mutate({...data, image:data.image.at(0) ?? data.image});
+    mutate({...data, image: data.image instanceof FileList ? data.image[0] : data.image });
   }
 
   function onError(errors) {
@@ -112,7 +115,9 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow label={'Cabin photo'} error={errors?.image?.message}>
-        <FileInput id="image" accept="image/*" />
+        <FileInput {...register('image',{
+          required: isEditing ? false :  'This field is required'
+        })} id="image" accept="image/*" />
       </FormRow>
 
       <FormRow>
@@ -120,7 +125,7 @@ function CreateCabinForm() {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isLoading}>Create cabin</Button>
+        <Button disabled={isLoading}>{isEditing ? 'Edit Cabin' : 'Create new Cabin'}</Button>
       </FormRow>
     </Form>
   );

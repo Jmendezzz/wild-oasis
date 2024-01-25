@@ -5,6 +5,6 @@ export interface Cabin{
     maxCapacity:number,
     regularPrice:number,
     discount:number,
-    image:string,
+    image:string | File,
     description:string
 }

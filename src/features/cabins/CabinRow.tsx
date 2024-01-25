@@ -1,10 +1,12 @@
-import styled from "styled-components";
-import { Cabin } from "../../interfaces/Cabin";
-import { formatCurrency } from "../../utils/helpers";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteCabin } from "../../services/apiCabins";
-import Button from "../../ui/Button";
-import toast from "react-hot-toast";
+import styled from 'styled-components';
+import { Cabin } from '../../interfaces/Cabin';
+import { formatCurrency } from '../../utils/helpers';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteCabin } from '../../services/apiCabins';
+import Button from '../../ui/Button';
+import toast from 'react-hot-toast';
+import { useState } from 'react';
+import CreateCabinForm from './CreateCabinForm';
 
 const TableRow = styled.div`
   display: grid;
@@ -31,43 +33,54 @@ const CabinItem = styled.div`
   font-size: 1.6rem;
   font-weight: 600;
   color: var(--color-grey-600);
-  font-family: "Sono";
+  font-family: 'Sono';
 `;
 
 const Price = styled.div`
-  font-family: "Sono";
+  font-family: 'Sono';
   font-weight: 600;
 `;
 
 const Discount = styled.div`
-  font-family: "Sono";
+  font-family: 'Sono';
   font-weight: 500;
   color: var(--color-green-700);
 `;
 
-
-function CabinRow({cabin}:{cabin:Cabin}) {
+function CabinRow({ cabin }: { cabin: Cabin }) {
+  const [showEditForm, setShowEditForm] = useState(false);
   const queryClient = useQueryClient();
-  const {isPending:isDeleting, mutate} = useMutation({
-    mutationFn:deleteCabin,
+  const { isPending: isDeleting, mutate } = useMutation({
+    mutationFn: deleteCabin,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey:['cabins']
-      })
-      toast.success('Cabin successfully deleted')
+        queryKey: ['cabins'],
+      });
+      toast.success('Cabin successfully deleted');
     },
-    onError: err => alert(err.message)
-  })
+    onError: (err) => alert(err.message),
+  });
   return (
-    <TableRow>
-      <Img src={cabin.image} />
-      <CabinItem>{cabin.name}</CabinItem>
-      <div>Fits up to {cabin.maxCapacity} guests</div>
-      <Price>{formatCurrency(cabin.regularPrice)}</Price>
-      <Discount>{formatCurrency(cabin.discount)}</Discount>
-      <Button onClick={()=> mutate(cabin.id)} disabled={isDeleting}>delete</Button>
-    </TableRow>
-  )
+    <>
+      <TableRow>
+        <Img src={cabin.image} />
+        <CabinItem>{cabin.name}</CabinItem>
+        <div>Fits up to {cabin.maxCapacity} guests</div>
+        <Price>{formatCurrency(cabin.regularPrice)}</Price>
+        <Discount>{formatCurrency(cabin.discount)}</Discount>
+        <div>
+          <Button onClick={() => setShowEditForm(prev => !prev)} disabled={isDeleting}>
+            Edit
+          </Button>
+
+          <Button onClick={() => mutate(cabin.id)} disabled={isDeleting}>
+            delete
+          </Button>
+        </div>
+      </TableRow>
+      {showEditForm && <CreateCabinForm editCabinData={cabin} />}
+    </>
+  );
 }
 
-export default CabinRow
+export default CabinRow;
