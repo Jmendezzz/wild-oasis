@@ -12,22 +12,26 @@ export async function getCabins() {
 }
 
 export async function createCabin(cabin: Cabin) {
-  const { path: imagePath, error: imageStorageError } = await uploadImage(
-    cabin.image
-  );
-  if (imageStorageError) {
-    throw new Error(
-      'Cabin could not be created, because the image was not uploaded'
+  console.log(cabin);
+  if (cabin.image instanceof File) {
+    const { path: imagePath, error: imageStorageError } = await uploadImage(
+      cabin.image
     );
+    cabin = { ...cabin, image: imagePath };
+    if (imageStorageError) {
+      throw new Error(
+        'Cabin could not be created, because the image was not uploaded'
+      );
+    }
   }
 
   const { data, error } = await supabase
     .from('cabins')
-    .insert([{ ...cabin, image: imagePath }])
+    .insert([{ ...cabin }])
     .select()
     .single();
   if (error) {
-    throw new Error('Cabin could not be created');
+    throw new Error('Cabin could not be created' + error.message);
   }
 
   return data;
@@ -42,13 +46,15 @@ export async function deleteCabin(id: number) {
 }
 
 export async function updateCabin(cabin: Cabin) {
-  console.log('update', cabin)
+  console.log('update', cabin);
   if (cabin.image instanceof File) {
-    const {path, error }  = await uploadImage(cabin.image);
-    if(error){
-      throw new Error('Could not update the dabin, becasue the image was not uploaded.')
+    const { path, error } = await uploadImage(cabin.image);
+    if (error) {
+      throw new Error(
+        'Could not update the dabin, becasue the image was not uploaded.'
+      );
     }
-    cabin = {...cabin, image:path}
+    cabin = { ...cabin, image: path };
   }
   const { data, error } = await supabase
     .from('cabins')
@@ -68,5 +74,8 @@ async function uploadImage(image: File) {
     .from('cabin-images')
     .upload(imageName, image);
 
-  return { path: `${supabaseUrl}/storage/v1/object/public/cabin-images/${data?.path}` , error: storageError };
+  return {
+    path: `${supabaseUrl}/storage/v1/object/public/cabin-images/${data?.path}`,
+    error: storageError,
+  };
 }

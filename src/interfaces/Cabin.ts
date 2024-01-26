@@ -1,6 +1,6 @@
 
 export interface Cabin{
-    id:number,
+    id?:number,
     name:string,
     maxCapacity:number,
     regularPrice:number,
