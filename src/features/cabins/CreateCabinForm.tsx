@@ -8,7 +8,13 @@ import { Cabin } from '../../interfaces/Cabin';
 import FormRow from '../../ui/FormRow';
 import { useCreateEditCabin } from './useCreateEditCabin';
 
-function CreateCabinForm({ editCabinData }: { editCabinData?: Cabin }) {
+function CreateCabinForm({
+  editCabinData,
+  onCloseModal,
+}: {
+  editCabinData?: Cabin;
+  onCloseModal?: () => void;
+}) {
   const isEditing = Boolean(editCabinData?.id);
 
   //getValues: values of the form
@@ -27,9 +33,16 @@ function CreateCabinForm({ editCabinData }: { editCabinData?: Cabin }) {
 
   function onSubmit(data: Cabin) {
     console.log(data); //Be careful with the numbers
-    mutate({...data,image: data.image instanceof FileList ? data.image[0] : data.image},
+    mutate(
       {
-        onSuccess: () => reset()
+        ...data,
+        image: data.image instanceof FileList ? data.image[0] : data.image,
+      },
+      {
+        onSuccess: () => {
+          reset();
+          onCloseModal?.();
+        },
       }
     );
   }
@@ -118,7 +131,11 @@ function CreateCabinForm({ editCabinData }: { editCabinData?: Cabin }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isLoading}>
