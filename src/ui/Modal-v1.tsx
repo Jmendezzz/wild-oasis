@@ -1,11 +1,3 @@
-import React, {
-  ReactElement,
-  ReactNode,
-  cloneElement,
-  createContext,
-  useContext,
-  useState,
-} from 'react';
 import { createPortal } from 'react-dom';
 import { HiXMark } from 'react-icons/hi2';
 import styled from 'styled-components';
@@ -59,46 +51,24 @@ const Button = styled.button`
   }
 `;
 
-const ModalContext = createContext({
-  open:  (name:string)=>{},
-  windowName: ''
-});
-
-function Modal({ children }: { children: ReactNode }) {
-  const [windowName, setWindowName] = useState('');
-  const open = setWindowName;
-
-  return (
-    <ModalContext.Provider value={{ windowName, open }}>
-      {children}
-    </ModalContext.Provider>
-  );
-}
-
-function Open({ opens, children }: { opens: string; children: ReactElement }) {
-  const { open } = useContext(ModalContext);
-  return cloneElement(children, { onClick: () => open(opens) });
-}
-
-function Window({children,name,}: {children: ReactElement;name: string;}) {
-  const { open, windowName } = useContext(ModalContext);
-
-  if (windowName !== name) return null;
-
+function Modal({
+  children,
+  onClose,
+}: {
+  children: React.ReactNode;
+  onClose: () => void;
+}) {
   return createPortal(
     <Overlay>
       <StyledModal>
-        <Button onClick={() => open('')}>
+        <Button onClick={onClose}>
           <HiXMark />
         </Button>
-        {cloneElement(children,{onCloseModal:()=>open('')})}
+        {children}
       </StyledModal>
     </Overlay>,
     document.body
   );
 }
-
-Modal.Open = Open;
-Modal.Window = Window;
 
 export default Modal;
