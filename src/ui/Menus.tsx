@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import styled from "styled-components";
 
 const StyledMenu = styled.div`
@@ -60,3 +61,9 @@ const StyledButton = styled.button`
     transition: all 0.3s;
   }
 `;
+
+function Menus({children}:{children: ReactElement[] | ReactElement}){
+
+}
+
+export default Menus;

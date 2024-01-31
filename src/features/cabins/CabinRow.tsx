@@ -88,6 +88,7 @@ function CabinRow({ cabin }: { cabin: Cabin }) {
               <CreateCabinForm editCabinData={cabin} />
             </Modal.Window>
           </Modal>
+          
           <Modal>
             <Modal.Open opens="delete-form">
               <Button disabled={isDeleting || isLoading}>
