@@ -1,11 +1,9 @@
-import React, {
+import {
   ReactElement,
   ReactNode,
   cloneElement,
   createContext,
   useContext,
-  useEffect,
-  useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
@@ -87,7 +85,7 @@ function Open({ opens, children }: { opens: string; children: ReactElement }) {
 function Window({ children, name }: { children: ReactElement; name: string }) {
   const { open, windowName } = useContext(ModalContext);
 
-  const windowRef = useOutsideClick(()=>open(''));
+  const windowRef = useOutsideClick(() => open(''));
 
   if (windowName !== name) return null;
 

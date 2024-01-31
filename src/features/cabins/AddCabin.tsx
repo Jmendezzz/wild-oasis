@@ -1,13 +1,11 @@
-import { useState } from 'react';
 import Button from '../../ui/Button';
 import CreateCabinForm from './CreateCabinForm';
 import Modal from '../../ui/Modal';
-import CabinTable from './CabinTable';
 
 function AddCabin() {
   // opens is optional ?
   return (
-    <>
+    <div>
       <Modal>
         <Modal.Open opens="cabin-form">
           <Button>Add new Cabin</Button>
@@ -16,7 +14,7 @@ function AddCabin() {
           <CreateCabinForm />
         </Modal.Window>
       </Modal>
-    </>
+    </div>
   );
 }
 
