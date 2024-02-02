@@ -3,6 +3,7 @@ import CabinRow from './CabinRow';
 import { useCabins } from './useCabins';
 import Table from '../../ui/Table';
 import { Cabin } from '../../interfaces/Cabin';
+import Menus from '../../ui/Menus';
 
 function CabinTable() {
   const { cabins, isLoading } = useCabins();
@@ -20,11 +21,12 @@ function CabinTable() {
         <div>DisCount</div>
         <div></div>
       </Table.Header>
-
-      <Table.Body
-        data={cabins as Array<Cabin>}
-        render={(cabin) => <CabinRow key={cabin.id} cabin={cabin} />}
-      />
+      <Menus>
+        <Table.Body
+          data={cabins as Array<Cabin>}
+          render={(cabin) => <CabinRow key={cabin.id} cabin={cabin} />}
+        />
+      </Menus>
     </Table>
   );
 }
