@@ -69,6 +69,7 @@ const ModalContext = createContext({
 function Modal({ children }: { children: ReactNode }) {
   const [windowName, setWindowName] = useState('');
   const open = setWindowName;
+  console.log(windowName)
 
   return (
     <ModalContext.Provider value={{ windowName, open }}>
@@ -88,6 +89,8 @@ function Window({ children, name }: { children: ReactElement; name: string }) {
   const windowRef = useOutsideClick(() => open(''));
 
   if (windowName !== name) return null;
+
+  console.log('Window:' + windowName);
 
   return createPortal(
     <Overlay>
