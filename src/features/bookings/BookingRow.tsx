@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { format, isToday } from "date-fns";
+import { Booking } from "../../interfaces/Booking";
 
 import Tag from "../../ui/Tag";
 import Table from "../../ui/Table";
@@ -46,8 +47,8 @@ function BookingRow({
     status,
     guests: { fullName: guestName, email },
     cabins: { name: cabinName },
-  },
-}) {
+  }
+}:{booking: Booking }) {
   const statusToTagName = {
     unconfirmed: "blue",
     "checked-in": "green",

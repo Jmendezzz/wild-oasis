@@ -8,5 +8,8 @@ export interface Booking{
     hasBreakfast:boolean,
     observations:string,
     isPaid:boolean,
-    numGuests:number
+    numGuests:number,
+    numNights:number,
+    totalPrice:number,
+    status:string
 }

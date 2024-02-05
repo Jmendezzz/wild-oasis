@@ -1,9 +1,16 @@
 import BookingRow from "./BookingRow";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
+import { useBookings } from "./useBookings";
+import { Booking } from "../../interfaces/Booking";
+import Spinner from "../../ui/Spinner";
 
 function BookingTable() {
-  const bookings = [];
+  const {bookings, isLoading, error}  = useBookings();
+
+  if(isLoading){
+    return <Spinner/>
+  }
 
   return (
     <Menus>
@@ -18,7 +25,7 @@ function BookingTable() {
         </Table.Header>
 
         <Table.Body
-          data={bookings}
+          data={bookings as Aray<Booking>}
           render={(booking) => (
             <BookingRow key={booking.id} booking={booking} />
           )}
