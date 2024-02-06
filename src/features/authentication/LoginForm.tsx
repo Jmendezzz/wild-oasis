@@ -3,12 +3,17 @@ import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import Input from "../../ui/Input";
 import FormRowVertical from "../../ui/FormRowVertical";
+import { useLogin } from "./useLogint";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const {login,isLoggingIn} = useLogin();
 
-  function handleSubmit() {}
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    login({email,password});
+  }
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -32,7 +37,7 @@ function LoginForm() {
         />
       </FormRowVertical>
       <FormRowVertical>
-        <Button size="large">Login</Button>
+        <Button size="large" disabled={isLoggingIn}>{isLoggingIn ? 'Logging in...' : 'Log in'}</Button>
       </FormRowVertical>
     </Form>
   );

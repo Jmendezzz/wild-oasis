@@ -11,7 +11,7 @@ const StyledFilter = styled.div`
   gap: 0.4rem;
 `;
 
-const FilterButton = styled.button<{active:boolean}>`
+const FilterButton = styled.button<{ active: boolean }>`
   background-color: var(--color-grey-0);
   border: none;
 
@@ -46,13 +46,20 @@ function Filter({
 
   function handleClick(value: string) {
     searchParams.set(filterField, value);
+    searchParams.set('page', '1');
     setSearchParams(searchParams);
   }
 
   return (
     <StyledFilter>
       {options.map((opt) => (
-        <FilterButton key={opt.value} onClick={() => handleClick(opt.value)} active={(searchParams.get(filterField)  || options[0].value) == opt.value}>
+        <FilterButton
+          key={opt.value}
+          onClick={() => handleClick(opt.value)}
+          active={
+            (searchParams.get(filterField) || options[0].value) == opt.value
+          }
+        >
           {opt.label}
         </FilterButton>
       ))}
