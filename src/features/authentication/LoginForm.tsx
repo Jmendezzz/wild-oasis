@@ -3,7 +3,8 @@ import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import Input from "../../ui/Input";
 import FormRowVertical from "../../ui/FormRowVertical";
-import { useLogin } from "./useLogint";
+import { useLogin } from "./useLogin";
+import SpinnerMini from "../../ui/SpinnerMini";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -12,7 +13,12 @@ function LoginForm() {
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    login({email,password});
+    login({email,password},{
+      onSettled: ()=>{
+        setEmail('');
+        setPassword('');
+      }
+    });
   }
 
   return (
@@ -37,7 +43,7 @@ function LoginForm() {
         />
       </FormRowVertical>
       <FormRowVertical>
-        <Button size="large" disabled={isLoggingIn}>{isLoggingIn ? 'Logging in...' : 'Log in'}</Button>
+        <Button size="large" disabled={isLoggingIn}>{isLoggingIn ? <SpinnerMini />: 'Log in'}</Button>
       </FormRowVertical>
     </Form>
   );

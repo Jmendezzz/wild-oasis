@@ -10,8 +10,8 @@ export function useLogin() {
     mutationFn: ({ email, password }: { email: string; password: string }) =>
       loginApi(email, password),
     onSuccess: () => {
+      navigate("/", {replace:true});
       toast.success('Welcome!');
-      navigate("/");
     },
     onError: (error) => {
       toast.error(error.message);
