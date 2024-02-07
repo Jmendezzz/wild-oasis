@@ -1,18 +1,17 @@
 import supabase from './supabase';
 
-export async function signup({fullName,email,password}){
+export async function signup({ fullName, email, password }) {
   await supabase.auth.signUp({
     email,
     password,
-    options:{
-      data:{
+    options: {
+      data: {
         fullName,
-        avatar:''
-      }
-    }
-  })
+        avatar: '',
+      },
+    },
+  });
 }
-
 
 export async function login(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -47,4 +46,69 @@ export async function logout() {
   if (error) {
     throw new Error(error.message);
   }
+}
+
+interface UpdateUserData {
+  password?: string;
+  data: {
+    fullName?: string;
+    avatar?: string;
+  };
+}
+
+export async function updateCurrentUser({
+  password,
+  fullName,
+  avatar,
+}: {
+  password?: string;
+  fullName?: string;
+  avatar?: File;
+}) {
+  let updateData: UpdateUserData = {
+    data: {},
+  };
+
+  if (password) {
+    updateData.password = password;
+  }
+  if (fullName) {
+    updateData = {
+      ...updateData,
+      data: {
+        fullName,
+      },
+    };
+  }
+
+  if (avatar) {
+    console.log(avatar);
+
+    const currentUser = await getCurrentUser();
+
+    const fileName = `avatar-${currentUser.id}-${Date.now()}`;
+
+    console.log(fileName);
+
+    const { error: storageError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, avatar);
+
+    if (storageError) {
+      throw new Error(storageError.message);
+    }
+
+    updateData.data = {
+      ...updateData.data,
+      avatar: `https://rooguivlderuvcpkzldr.supabase.co/storage/v1/object/public/avatars/${fileName}`,
+    };
+  }
+
+
+  const { data: updatedUser, error } = supabase.auth.updateUser(updateData);
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return updatedUser;
 }
