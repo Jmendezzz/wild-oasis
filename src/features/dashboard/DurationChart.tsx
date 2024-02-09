@@ -1,7 +1,14 @@
 import styled from 'styled-components';
 import { Booking } from '../../interfaces/Booking';
 import Heading from '../../ui/Heading';
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from 'recharts';
 import { useDarkModeContext } from '../../context/DarkModeContext';
 
 const ChartBox = styled.div`
@@ -107,16 +114,19 @@ const startDataDark = [
     color: '#7e22ce',
   },
 ];
-
-function prepareData(startData, stays) {
+interface DataStructure {
+  duration: string;
+  value: number;
+  color: string;
+}
+function prepareData(startData: DataStructure[], stays: Booking[]) {
   // A bit ugly code, but sometimes this is what it takes when working with real data 😅
 
-  function incArrayValue(arr, field) {
+  function incArrayValue(arr: DataStructure[], field: string) {
     return arr.map((obj) =>
       obj.duration === field ? { ...obj, value: obj.value + 1 } : obj
     );
   }
-
   const data = stays
     .reduce((arr, cur) => {
       const num = cur.numNights;
@@ -136,15 +146,14 @@ function prepareData(startData, stays) {
 }
 
 function DurationChart({ confirmedStays }: { confirmedStays: Booking[] }) {
-  const {isDarkMode} = useDarkModeContext();
+  const { isDarkMode } = useDarkModeContext();
   const startData = isDarkMode ? startDataDark : startDataLight;
-
-  const data = prepareData(startData,confirmedStays);
+  const data = prepareData(startData, confirmedStays);
   return (
     <ChartBox>
       <Heading as="h2">Stay duration summary</Heading>
-      <ResponsiveContainer width='100%' height={240}>
-        <PieChart >
+      <ResponsiveContainer width="100%" height={240}>
+        <PieChart>
           <Pie
             data={data}
             nameKey="duration"
@@ -159,16 +168,15 @@ function DurationChart({ confirmedStays }: { confirmedStays: Booking[] }) {
                 key={entry.duration}
               />
             ))}
-            
           </Pie>
-          <Tooltip/>
+          <Tooltip />
           <Legend
-            verticalAlign='middle'
-            align='right'
-            width="30%"
-            layout='vertical'
+            verticalAlign="middle"
+            align="right"
+            width={'30%'}
+            layout="vertical"
             iconSize={15}
-            iconType='circle'
+            iconType="circle"
           />
         </PieChart>
       </ResponsiveContainer>

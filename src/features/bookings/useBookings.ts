@@ -21,26 +21,26 @@ export function useBookings() {
   //Query key uses a dependency array too like useEffect.
   const { data, error, isLoading } = useQuery({
     queryKey: ['bookings', filter, sortBy, page],
-    queryFn: () => getBookings({ filter, sortBy, page }),
+    queryFn: () => getBookings({ filter: filter || { field: '', value: '', method: undefined }, sortBy, page }),
   });
 
   // PRE-FETCHING
   let pageCount;
-  if (data) {
+  if (data && data.count) {
     pageCount = Math.ceil(data.count / PAGE_SIZE);
   }
 
-  if (page < pageCount) {
+  if (pageCount && page < pageCount) {
     queryClient.prefetchQuery({
       queryKey: ['bookings', filter, sortBy, page + 1],
-      queryFn: () => getBookings({ filter, sortBy, page: page + 1 }),
+      queryFn: () => getBookings({ filter: filter || { field: '', value: '', method: undefined }, sortBy, page: page + 1 }),
     });
   }
 
   if (page > 1) {
     queryClient.prefetchQuery({
       queryKey: ['bookings', filter, sortBy, page - 1],
-      queryFn: () => getBookings({ filter, sortBy, page: page - 1 }),
+      queryFn: () => getBookings({ filter: filter || { field: '', value: '', method: undefined }, sortBy, page: page - 1 }),
     });
   }
 

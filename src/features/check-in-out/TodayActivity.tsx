@@ -48,7 +48,7 @@ function TodayActivity() {
       <Row type="vertical">
         <Heading as="h2">Today</Heading>
         {!isLoading ? (
-          todayActivities?.length > 0 ? (
+          (todayActivities?.length ?? 0) > 0 ? (
             <TodayList>
               {todayActivities?.map(activity=>(
                 <TodayItem activity={activity}/>

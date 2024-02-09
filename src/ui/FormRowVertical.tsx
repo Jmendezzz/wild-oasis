@@ -1,3 +1,5 @@
+import React from "react";
+import { ReactElement } from "react";
 import styled from "styled-components";
 
 const StyledFormRow = styled.div`
@@ -16,10 +18,11 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function FormRowVertical({ label, error, children }) {
+function FormRowVertical({ label, error, children }:{label?:string, error?:string, children: ReactElement | ReactElement[]}) {
+  const childrenArray = React.Children.toArray(children);
   return (
     <StyledFormRow>
-      {label && <Label htmlFor={children.props.id}>{label}</Label>}
+      {label && <Label htmlFor={(childrenArray[0] as React.ReactElement).props.id}>{label}</Label>}
       {children}
       {error && <Error>{error}</Error>}
     </StyledFormRow>

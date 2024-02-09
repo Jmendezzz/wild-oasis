@@ -60,11 +60,11 @@ const Button = styled.button`
     color: var(--color-grey-500);
   }
 `;
-
-const ModalContext = createContext({
-  open: (name: string) => {},
-  windowName: '',
-});
+interface ContextStructure{
+  open:(name:string)=> void,
+  windowName:string
+}
+const ModalContext = createContext<ContextStructure>({} as ContextStructure);
 
 function Modal({ children }: { children: ReactNode }) {
   const [windowName, setWindowName] = useState('');
@@ -94,7 +94,7 @@ function Window({ children, name }: { children: ReactElement; name: string }) {
 
   return createPortal(
     <Overlay>
-      <StyledModal ref={windowRef}>
+      <StyledModal ref={windowRef as React.RefObject<HTMLDivElement>}>
         <Button onClick={() => open('')}>
           <HiXMark />
         </Button>

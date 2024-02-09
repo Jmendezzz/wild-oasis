@@ -50,11 +50,9 @@ const Amount = styled.div`
 function BookingRow({
   booking: {
     id: bookingId,
-    created_at,
     startDate,
     endDate,
     numNights,
-    numGuests,
     totalPrice,
     status,
     guests: { fullName: guestName, email },
@@ -70,7 +68,7 @@ function BookingRow({
   };
   const navigate = useNavigate();
 
-  const { checkOut, isCheckinOut } = useCheckout();
+  const { checkOut } = useCheckout();
 
   const { deleteBooking, isDeleting } = useDeleteBooking();
 
@@ -87,7 +85,7 @@ function BookingRow({
         <span>
           {isToday(new Date(startDate))
             ? 'Today'
-            : formatDistanceFromNow(startDate)}{' '}
+            : formatDistanceFromNow(startDate)}
           &rarr; {numNights} night stay
         </span>
         <span>

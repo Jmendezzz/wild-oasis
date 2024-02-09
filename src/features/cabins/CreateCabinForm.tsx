@@ -3,7 +3,7 @@ import Form from '../../ui/Form';
 import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
-import { useForm } from 'react-hook-form';
+import { SubmitErrorHandler, useForm } from 'react-hook-form';
 import { Cabin } from '../../interfaces/Cabin';
 import FormRow from '../../ui/FormRow';
 import { useCreateEditCabin } from './useCreateEditCabin';
@@ -47,12 +47,13 @@ function CreateCabinForm({
     );
   }
 
-  function onError(errors) {
+  const onError: SubmitErrorHandler<Cabin> = (errors) => {
     console.log(errors);
-  }
+  };
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+
+    <Form type="submit" onSubmit={handleSubmit(onSubmit, onError)}>
       <FormRow label={'Cabin name'} error={errors?.name?.message}>
         <Input
           type="text"

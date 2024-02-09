@@ -1,6 +1,14 @@
 import supabase from './supabase';
 
-export async function signup({ fullName, email, password }) {
+export async function signup({
+  fullName,
+  email,
+  password,
+}: {
+  fullName: string;
+  email: string;
+  password: string;
+}) {
   await supabase.auth.signUp({
     email,
     password,
@@ -86,6 +94,10 @@ export async function updateCurrentUser({
 
     const currentUser = await getCurrentUser();
 
+    if (!currentUser) {
+      throw new Error("Current user is null.");
+    }
+
     const fileName = `avatar-${currentUser.id}-${Date.now()}`;
 
     console.log(fileName);
@@ -104,8 +116,7 @@ export async function updateCurrentUser({
     };
   }
 
-
-  const { data: updatedUser, error } = supabase.auth.updateUser(updateData);
+  const { data: updatedUser, error } = await supabase.auth.updateUser(updateData);
   if (error) {
     throw new Error(error.message);
   }

@@ -28,7 +28,7 @@ const Guest = styled.div`
 
 
 function TodayItem({activity}: {activity:Booking}) {
-  const {id,status,numGuests,numNights, guests} = activity;
+  const {id,status,numNights, guests} = activity;
   return (
     <StyledTodayItem>
       {status === 'unconfirmed' && <Tag type='green'>Arriving</Tag>}

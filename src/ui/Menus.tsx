@@ -1,4 +1,5 @@
 import React, {
+  LegacyRef,
   ReactElement,
   createContext,
   useContext,
@@ -76,33 +77,32 @@ const StyledButton = styled.button`
     transition: all 0.3s;
   }
 `;
-const MenusContext = createContext({
-  openId: '',
-  position: { x: 0, y: 0 } as { x: number; y: number } | null,
-  setPosition: ({ x, y }: { x: number; y: number }) => {},
-  close: () => {},
-  open: (id: string) => {},
-});
+interface ContextStructure{
+  openId: string | number;
+  position: { x: number; y: number };
+  setPosition: ({ x,y }:{x:number, y:number}) => void;
+  close: () => void;
+  open: (id: string | number) => void;
+}
+const MenusContext = createContext<ContextStructure>({} as ContextStructure);
 
 function Menus({ children }: { children: ReactElement[] | ReactElement }) {
-  const [openId, setOpenId] = useState('');
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  const [openId, setOpenId] = useState<string | number>('');
+  const [position, setPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const close = () => setOpenId('');
-  const open = setOpenId;
+  const open = (id: string | number) => setOpenId(id);
 
   return (
     <MenusContext.Provider
-      value={{ openId, close, open, setPosition, position }}
+      value={{ openId: openId as string, close, open, setPosition, position }}
     >
       {children}
     </MenusContext.Provider>
   );
 }
 
-function Toggle({ id }: { id: string }) {
+function Toggle({ id }: { id: string | number }) {
   const { openId, close, open, setPosition } = useContext(MenusContext);
 
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
@@ -126,18 +126,18 @@ function Toggle({ id }: { id: string }) {
   );
 }
 
-function List({ id, children }: { id: string; children: ReactElement[]| ReactElement }) {
+function List({ id, children }: { id: string | number; children: ReactElement[]| ReactElement }) {
   const { openId, position, close } = useContext(MenusContext);
   const ref = useOutsideClick(close);
   if (openId !== id) return null;
 
   return createPortal(
-    <StyledList ref={ref} position={position}>{children}</StyledList>,
+    <StyledList ref={ref as LegacyRef<HTMLUListElement> | undefined} position={position}>{children}</StyledList>,
     document.body
   );
 }
 
-function Button({ children,icon,onClick }: { children: Element | string, icon: ReactElement, onClick?: ()=>void }) {
+function Button({ children,icon,onClick }: { children: ReactElement | string, icon: ReactElement, onClick?: ()=>void }) {
   const {close} = useContext(MenusContext);
   function handleClick(){
     onClick?.();

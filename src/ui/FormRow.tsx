@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import Input from './Input';
-import { ReactNode } from 'react';
+import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
+import { ReactElement } from 'react';
 
 const FormRowStyled = styled.div`
   display: grid;
@@ -39,7 +39,8 @@ const Error = styled.span`
 `;
 interface Props {
     label?:string,
-    error?:string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error?:string | undefined | FieldError | Merge<FieldError, FieldErrorsImpl<any>>,
     children: JSX.Element | JSX.Element[] 
 }
 export default function FormRow({ label, error, children }: Props) {
@@ -47,7 +48,7 @@ export default function FormRow({ label, error, children }: Props) {
     <FormRowStyled>
     {label && <Label htmlFor={(children as JSX.Element).props.id}>{label}</Label>}
       {children}
-      {error && <Error>{error}</Error>}
+      {error && <Error>{error as ReactElement}</Error>}
     </FormRowStyled>
   );
 }
