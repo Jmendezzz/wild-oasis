@@ -12,6 +12,7 @@ import { useBooking } from './useBooking';
 import Spinner from '../../ui/Spinner';
 import { Booking } from '../../interfaces/Booking';
 import { useNavigate } from 'react-router-dom';
+import Empty from '../../ui/Empty';
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -28,6 +29,9 @@ function BookingDetail() {
 
   if (isLoading) {
     return <Spinner />;
+  }
+  if(!booking){
+    return <Empty resource={'Booking'}/>
   }
 
   const statusToTagName = {
